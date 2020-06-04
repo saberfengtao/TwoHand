@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>用户界面的头</title>
+    <link rel="stylesheet" type="text/css" href="/res/static/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/res/layui/css/layui.css">
+</head>
+<body>
+<div class="site-nav-bg">
+    <div class="site-nav w1200">
+        <p class="sn-back-home">
+            <i class="layui-icon layui-icon-home"></i>
+            <a href="toTwoHandIndex">首页</a>
+        </p>
+        <div class="sn-quick-menu">
+            <div class="login"><a th:if="${session.user==null}" href="login.html">登录</a>
+
+                <a th:if="${session.user!=null}" target="_blank" th:href="@{goUserHome(userId=${session.user.userId})}" style="color: #0C0C0C;">用户：[[${session.user.userLoginName}]]-登录成功</a>
+            </div>
+            <!--<div class="sp-cart"><a href="shopcart.html">购物车</a><span>2</span></div>-->
+        </div>
+    </div>
+</div>
+</body>
+</html>

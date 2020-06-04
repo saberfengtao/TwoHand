@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>物品详细信息</title>
+  <link rel="stylesheet" type="text/css" href="../res/static/css/main.css">
+  <link rel="stylesheet" type="text/css" href="../res/layui/css/layui.css">
+  <script type="text/javascript" src="../res/layui/layui.js"></script>
+  <script src="/js/jquery.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+</head>
+<body>
+
+  <div class="site-nav-bg">
+    <div class="site-nav w1200">
+      <p class="sn-back-home">
+        <i class="layui-icon layui-icon-home"></i>
+        <a href="/basic/toTwoHandIndex">首页</a><input id="msg" type="hidden" th:value="${msg}">
+      </p>
+      <div class="sn-quick-menu">
+        <div class="login"><a th:if="${session.user==null}" href="/basic/toUserLogin">登录</a>
+
+          <a th:if="${session.user!=null}" title="点击去到个人中心" target="_blank"
+             th:onclick="'javascript:goUserHome('+${session.user.userId}+')'" style="color: #0C0C0C;">用户：[[${session.user.userLoginName}]]</a>
+          &nbsp;&nbsp&nbsp;&nbsp<a th:if="${session.user!=null}" id="zx" title="点击退出当前用户" href="/logoutUptUser">注销</a>
+        </div>
+        <!--<div class="sp-cart"><a href="shopcart.html">购物车</a><span>2</span></div>-->
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="header">
+    <div class="headerLayout w1200">
+      <div class="headerCon">
+        <h1 class="mallLogo">
+          <a href="#" title="母婴商城">
+            <img src="../res/static/img/logo.png">
+          </a>
+        </h1>
+        <div class="mallSearch">
+          <form action="" class="layui-form" novalidate>
+            <input type="text" name="title" required  lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入需要的商品">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">
+                <i class="layui-icon layui-icon-search"></i>
+            </button>
+            <input type="hidden" name="" value="">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="content content-nav-base datails-content">
+    <div class="main-nav">
+      <div class="inner-cont0">
+        <div class="inner-cont1 w1200">
+          <div class="inner-cont2">
+            <a href="/good/getGoodByGoodTypeId?goodTypeId=0" class="active">所有商品</a>
+            <!--  <a href="buytoday.html">今日团购</a>
+              <a href="information.html">母婴资讯</a>
+              <a href="about.html">关于我们</a>-->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="data-cont-wrap w1200">
+      <div class="crumb">
+        <a href="javascript:;">首页</a>
+        <span>></span>
+        <a href="javascript:;">所有商品</a>
+        <span>></span>
+        <a href="javascript:;">产品详情</a>
+      </div>
+      <div class="product-intro layui-clear">
+        <div class="preview-wrap">
+          <a href="javascript:;"><img width="400px" height="400px" th:src="${saleOrder.good.goodPhoto}"></a>
+        </div>
+        <div class="itemInfo-wrap">
+          <div class="itemInfo">
+            <div class="title">
+              <h4>物品名称：[[${saleOrder.good.goodName}]] </h4>
+            <!--  <span><i class="layui-icon layui-icon-rate-solid"></i>收藏</span>-->
+            </div>
+            <div class="summary">
+              <div style="position: absolute;margin-left:360px; width: 380px;height: 140px;">
+                &nbsp;&nbsp;&nbsp;&nbsp; 物品描述：
+              [[${saleOrder.good.goodIntroduction}]]
+              </div>
+              <p class="reference"><span>数&nbsp;&nbsp;量：</span> [[${saleOrder.good.goodCount}]]</p>
+              <p class="activity"><span>价&nbsp;&nbsp;格：</span><strong class="price"><i>￥</i>[[${saleOrder.good.goodPrice}]]</strong></p>
+              <p class="address-box"><span>上架时间</span><strong class="address">[[${saleOrder.soTimeStart}]]</strong></p>
+            </div>
+
+            <div class="choose-attrs" th:if="${saleOrder.soState==0}">
+              <div class="color layui-clear">
+                <span class="title">出&nbsp;售&nbsp;者：</span>
+                <div class="color-cont">[[${saleOrder.outUser.userName}]]
+                  <span th:if="${saleOrder.soState==0&&saleOrder.outUser.userId==session.user.userId}">（提示：该商品是您发布的用户自己发布的！！）</span> </div>
+              </div>
+              <div class="number layui-clear">
+                <span class="title">电&nbsp;话&nbsp;号：</span>
+                <div class="number-cont">
+                  [[${saleOrder.outUser.userTel}]]<!--<input  maxlength="4" type="" name="" th:value="1">-->
+                </div>
+                <div style="width: 380px;height: 20px;float: left;margin-left: 20px;">
+                  <span class="title">邮&nbsp;&nbsp;箱：[[${saleOrder.outUser.userMail}]]</span>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="choose-attrs" th:if="${saleOrder.soState==3}">此物品由本系统供应，经过认证质量无忧</div>
+            <div class="choose-btns">
+              <form id="ff" action="/alipay" method="post" style="float: left"><!--/saleOrder/buyGoodOverOrder-->
+
+               <input th:value="${saleOrder.soId}" type="hidden" name="soId">
+               <input th:value="${saleOrder.soPrice}" type="hidden" name="soPrice">
+               <input th:value="${saleOrder.soNumber}" type="hidden" name="soNumber">
+               <input th:value="${saleOrder.soTimeStart}" type="hidden" name="soTimeStart">
+                <input th:value="${saleOrder.outUser.userId}" type="hidden" name="outUserId">
+               <input th:value="${saleOrder.soState}" type="hidden" name="soState">
+               <input th:value="${saleOrder.good.goodIntroduction}" type="hidden" name="goodIntroduction">
+               <input th:value="${session.user.userId}" type="hidden" name="userId">
+               <input th:value="${saleOrder.good.goodId}" type="hidden" name="goodId">
+               <input th:value="${saleOrder.good.goodName}" type="hidden" name="goodName">
+
+
+              <input id="goodBuy" onclick="good_buy();" class="layui-btn layui-btn-primary purchase-btn"  type="button" value="购买(支付宝)">
+               <!-- <button id="" onclick="good_buy();" class="layui-btn layui-btn-primary purchase-btn">立刻购买（内）</button>-->
+             <!-- <div th:if="${saleOrder.soState==0}" class="layui-btn  layui-btn-danger car-btn" style="width: 360px;">可通过本网站提供的练习方式直接与卖者联系</div>-->
+            </form>
+              <form id="ee" action="/saleOrder/buyGoodOverOrder" method="post" style="float: left">
+
+                <input th:value="${saleOrder.soId}" type="hidden" name="soId">
+                <input th:value="${saleOrder.soPrice}" type="hidden" name="soPrice">
+                <input th:value="${saleOrder.soNumber}" type="hidden" name="soNumber">
+                <input th:value="${saleOrder.soTimeStart}" type="hidden" name="soTimeStart">
+                <input th:value="${saleOrder.outUser.userId}" type="hidden" name="outUserId">
+                <input th:value="${saleOrder.soState}" type="hidden" name="soState">
+                <input th:value="${saleOrder.good.goodIntroduction}" type="hidden" name="goodIntroduction">
+                <input th:value="${session.user.userId}" type="hidden" name="userId">
+                <input th:value="${saleOrder.good.goodId}" type="hidden" name="goodId">
+
+
+                <input id="goodBuyTwo" value="立刻购买（内）" type="button" onclick="good_buyTwo();" class="layui-btn layui-btn-primary purchase-btn">
+                <div th:if="${saleOrder.soState==0}" class="layui-btn  layui-btn-danger car-btn" style="width: 360px;">可通过本网站提供的练习方式直接与卖者联系</div>
+              </form>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="layui-clear"><!--
+        <div class="aside">
+          <h4>热销推荐</h4>
+          <div class="item-list">
+            <div class="item">
+              <img src="../res/static/img/details_img2.jpg">
+              <p><span>可爱宝宝粉色连体秋裤</span><span class="pric">￥99.00</span></p>
+            </div>
+            <div class="item">
+              <img src="../res/static/img/details_img2.jpg">
+              <p><span>可爱宝宝粉色连体秋裤</span><span class="pric">￥99.00</span></p>
+            </div>
+            <div class="item">
+              <img src="../res/static/img/details_img2.jpg">
+              <p><span>可爱宝宝粉色连体秋裤</span><span class="pric">￥99.00</span></p>
+            </div>
+            <div class="item">
+              <img src="../res/static/img/details_img2.jpg">
+              <p><span>可爱宝宝粉色连体秋裤</span><span class="pric">￥99.00</span></p>
+            </div>
+            <div class="item">
+              <img src="../res/static/img/details_img2.jpg">
+              <p><span>可爱宝宝粉色连体秋裤</span><span class="pric">￥99.00</span></p>
+            </div>
+            <div class="item">
+              <img src="../res/static/img/details_img2.jpg">
+              <p><span>可爱宝宝粉色连体秋裤</span><span class="pric">￥99.00</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="detail">
+          <h4>详情</h4>
+          <div class="item">
+            <img src="../res/static/img/details_imgbig.jpg">
+          </div>
+        </div>
+      --></div>
+    </div>
+  </div>
+  <form id="goUserOwn" method="post" th:action="@{/goUserHome}" target="_blank">
+    <input id="userId" type="hidden" name="userId">
+  </form>
+<script type="text/javascript">
+  layui.config({
+    base: '../res/static/js/util/' //你存放新模块的目录，注意，不是layui的模块目录
+  }).use(['mm','jquery'],function(){
+      var mm = layui.mm,$ = layui.$;
+      var cur = $('.number-cont input').val();
+      $('.number-cont .btn').on('click',function(){
+        if($(this).hasClass('add')){
+          cur++;
+         
+        }else{
+          if(cur > 1){
+            cur--;
+          }  
+        }
+        $('.number-cont input').val(cur)
+      })
+      
+  });
+</script>
+<script type="text/javascript">
+  function good_buy(){
+    if([[${saleOrder.soState==0&&saleOrder.outUser.userId==session.user.userId}]]){
+     alert("你购买的是自己发布的");
+    }else{
+      $("#ff").submit();
+    }
+  }
+
+  function good_buyTwo(){
+   if([[${saleOrder.soState==0&&saleOrder.outUser.userId==session.user.userId}]]){
+     alert("请不要购买自己发布的物品！！！");
+  }else{
+     $("#ee").submit();
+    }
+  }
+
+  function goUserHome(id){
+    var userId=document.getElementById("userId");
+    var goUserOwn=document.getElementById("goUserOwn");
+    userId.value=id;
+    goUserOwn.submit();
+  }
+</script>
+
+
+</body>
+</html>

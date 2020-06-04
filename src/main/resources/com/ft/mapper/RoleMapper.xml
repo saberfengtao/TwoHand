@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ft.mapper.RoleMapper">
+
+    <!--添加角色-->
+    <insert id="addRole" parameterType="string">
+        insert into role values(null,#{roleName},0)
+    </insert>
+    
+    <select id="getRolesByAdminName" parameterType="String" resultType="String">
+     select r.role_name 
+     from admin a LEFT JOIN role r
+     on a.admin_role=r.role_id
+     WHERE admin_login_name=#{adminName}
+   </select>
+
+    <!--查询所有角色-->
+    <select id="getAllRoles" resultMap="com.ft.mapper.CommonMapper.roleMap">
+        select * from role
+    </select>
+
+    <!--查询所有角色通过管理员id-->
+    <select id="getAllRolesByAdminId" resultMap="com.ft.mapper.CommonMapper.roleMap">
+     select r.*
+     from admin a
+     LEFT JOIN t_admin_role ta on a.admin_login_name=ta.admin_id
+     LEFT JOIN role r on r.role_id=ta.role_id
+     WHERE a.admin_id=#{adminId}
+    </select>
+
+    <!--添加角色权限-->
+    <insert id="addRoleAuthority">
+        insert into t_role_autho values
+        <foreach collection="authority" item="authority1" separator=",">
+            (#{roleId},#{authority1})
+        </foreach>
+    </insert>
+
+    <!--通过角色名获取角色ID-->
+    <select id="getRoleIdByName" resultType="int">
+        select role_id from role where role_name = #{value}
+    </select>
+
+    <!--通过角色ID得到角色-->
+    <select id="getRoleById" resultMap="com.ft.mapper.CommonMapper.roleMap">
+        select * from role where role_id = #{id}
+    </select>
+
+    <!--通过角色ID找到权限-->
+    <select id="getAuthoritiesByRoleId" resultMap="com.ft.mapper.CommonMapper.authorityMap">
+        SELECT ta.*
+           from role r
+           LEFT JOIN t_role_autho rra on r.role_id=rra.role_id
+           LEFT JOIN t_autho ta on ta.autho_id=rra.autho_id
+           WHERE r.role_id=#{id}
+    </select>
+
+   <!-- 更改角色-->
+    <update id="updRole" parameterType="Role">
+        update role set role_name = #{roleName},role_state=#{roleState} where role_id = #{roleId}
+    </update>
+
+    <!--删除当前ID角色的所有权限-->
+    <delete id="delRoleAutho">
+        delete from t_role_autho where role_id = #{roleId}
+    </delete>
+</mapper>

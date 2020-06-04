@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="renderer" content="webkit">
+    <title></title>  
+    <link rel="stylesheet" href="/css/pintuer.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="/js/jquery.js"></script>
+    <script src="/js/pintuer.js"></script>
+</head>
+<body>
+
+  <div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder">用户管理</strong></div>
+    <!--<div class="padding border-bottom">
+      <ul class="search">
+        <li>
+          <button type="button"  class="button border-green" id="checkall"><span class="icon-check"></span> 全选</button>
+          <button type="submit" class="button border-red"><span class="icon-trash-o"></span> 批量删除</button>
+        </li>
+      </ul>
+    </div>-->
+    <table class="table table-hover text-center">
+      <tr>
+        <th width="120">序号</th>
+          <th>用户账户</th>
+          <th>用户姓名</th>
+          <th width="70">用户图片</th>
+          <th>用户电话</th>
+          <th>用户邮箱</th>
+          <th>状态</th>
+        <th width="120">操作</th>
+       <!-- <th width="120">删除</th>-->
+      </tr>
+       <!-- [[${userList}]]-->
+        <tr th:each="user:${userList}">
+            <td th:text="${userStat.index+1}"></td>
+            <td th:text="${user.userLoginName}"></td>
+            <td th:text="${user.userName}"></td>
+            <td height="70"><img th:src="${user.userPhoto}" height="70" width="70" alt="当前用户未添加图片..."/></td>
+            <td th:text="${user.userTel}"></td>
+            <td th:text="${user.userMail}"></td>
+            <td>
+                <span th:if="${user.userState==0}">正常</span>
+                <span th:if="${user.userState==1}">冻结</span>
+            </td>
+            <td><div class="button-group">
+                <a th:if="${user.userState==0}" class="button border-red" th:href="@{/user/updUserState(id=${user.userId},x=${user.userState})}"> 冻结用户</a>
+                <a th:if="${user.userState==1}" class="button border-green" th:href="@{/user/updUserState(id=${user.userId},x=${user.userState})}"> 解封用户</a>
+            </div></td>
+        </tr>
+
+    </table>
+  </div>
+  <form id="ff" method="post" action="delRole">
+      <input id="roleId" type="hidden" name="roleId">
+  </form>
+<script type="text/javascript">
+function del(id){
+	if(confirm("您确定要删除吗?")){
+	    $("#roleId").val(id);
+	    $("#ff").submit();
+	}
+}
+
+$("#checkall").click(function(){ 
+  $("input[name='id[]']").each(function(){
+	  if (this.checked) {
+		  this.checked = false;
+	  }
+	  else {
+		  this.checked = true;
+	  }
+  });
+})
+
+function DelSelect(){
+	var Checkbox=false;
+	 $("input[name='id[]']").each(function(){
+	  if (this.checked==true) {		
+		Checkbox=true;	
+	  }
+	});
+	if (Checkbox){
+		var t=confirm("您确认要删除选中的内容吗？");
+		if (t==false) return false; 		
+	}
+	else{
+		alert("请选择您要删除的内容!");
+		return false;
+	}
+}
+
+</script>
+</body></html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="renderer" content="webkit">
+    <title></title>
+    <link rel="stylesheet" href="/css/pintuer.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="/js/jquery.js"></script>
+    <script src="/js/pintuer.js"></script>
+</head>
+
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head" id="add"><strong><span class="icon-pencil-square-o"></span>增加角色</strong></div>
+    <div class="body-content">
+        <form method="post" class="form-x" action="">
+            <div class="form-group">
+                <div class="label">
+                    <label><strong>角色名称：</strong></label>
+                </div>
+                <span id="warn" style="float: left;margin-top: -20px;"></span>
+                <div class="field">
+                    <input type="text" id="userRole" class="input w50" value="" name="roleName" data-validate="required:请输入角色名"/>
+                    <div class="tips"></div>
+                </div>
+            </div>
+            <!--从model当中拿到所有的权限，在此处遍历根权限（level值为0的权限）-->
+            <div class="form-group" th:each="root:${authorities}" th:if="${root.authoLevel==0}">
+                <div style="margin-left:56px">
+                    <!--显示权限的名称-->
+                    <label><strong th:text="${root.authoName}"></strong></label>
+                </div>
+                <div class="field" style="padding-top:8px;margin-left:80px">
+                    <table>
+                        <tr>
+                            <!--再次遍历所有的权限，这次权限的key为one，并且显示one的fatherId等于根权限的id-->
+                            <!--也就是说子权限的father要等于父权限的id-->
+                            <td th:each="one:${authorities}" th:if="${one.authoFatherId==root.authoId}">
+                                <!--显示子权限的名称-->
+                                <span th:text="${one.authoName}"></span>
+                                <!--<input  name="perms" value="17" type="hidden">
+                                <input  name="perms" value="18" type="hidden">
+                                <input  name="perms" value="19" type="hidden">-->
+                                <input name="perms" type="checkbox" th:value="${one.authoId}" tag="1">
+                                <!--再次遍历所有的权限，这次权限的key为two，并且显示two的fatherId等于one的id-->
+                               <!-- <div style="float:right" th:each="two:${authorities}" th:if="${two.authoFatherId==one.authoId}">
+                                    <span th:text="${two.authoName}" style="color:#ff0000"></span>
+                                    <input name="perms" type="checkbox" th:value="${two.authoId}" tag="2">
+                                </div>-->
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label">
+                    <label></label>
+                </div>
+                <div class="field">
+                    <button id="su" class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(function () {
+        //找到所有tag属性为2的input标签
+        $(':input[tag=2]').click(function () {
+            var isSelect = false;
+            $(":input[tag=2]").each(function (k,v) {
+                //alert(v.checked);
+                if(v.checked) {
+                    isSelect = true;
+                }
+            })
+            if(isSelect) {
+                //注意此处必须使用prop，不能使用attr否则手动点击取消选中候再次执行代码父选项的checkbox不会被选中
+                //attr属性为html级别的属性，不会跟随动态更新，而prop则是js级别的动态属性。
+                $(this).parent().parent().children(":first").next().prop("checked",true);
+            }else {
+                $(this).parent().parent().children(":first").next().prop("checked",false);
+            }
+        })
+    })
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $("#userRole").blur(function(){
+            var name=$("#userRole").val();
+            var warn = document.getElementById('warn');
+            $.ajax({
+                url:'/admin/haveRole',
+                data:{roleName:name},
+                success:function(data){
+                    if(data=="null") {
+                        $('#warn').hide();
+                        $('#su').attr("disabled","disabled");
+                    }
+                    else
+                    if(data == "true"){
+                        $('#warn').show();
+                        warn.style.color='#f00';
+                        $('#warn').html("×用户名已经存在");
+                        $('#su').attr("disabled","disabled");
+                    }else{
+                        $('#warn').show();
+                        warn.style.color='#36ff25';
+                        $('#warn').html("√户名可以使用");
+                        $('#su').removeAttr("disabled");
+
+                    }
+                }
+            });
+
+        });
+    });
+
+</script>
+</body>
+</html>

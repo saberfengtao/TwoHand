@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title>用户修改密码</title>
+<link rel="stylesheet" href="/css/pintuer.css">
+<link rel="stylesheet" href="/css/admin.css">
+<script src="/js/jquery.js"></script>
+<script src="/js/pintuer.js"></script>
+</head>
+<body>
+<div style="font-weight:bold;color: #c0e2ef;width: 600px;height: 30px;margin-left: auto;margin-right: auto;background-color: #00aaee;margin-top: 60px;">
+  <p align="center" style="height: 30px;">用户名称：[[${session.user.userLoginName}]]</p>
+</div>
+<div style="width: 600px;margin-left: auto;margin-right: auto;">
+<div class="panel admin-panel">
+  <div class="panel-head"><strong><span class="icon-key"></span> 意见反馈（本系统处于测试阶段，遇到问题请反馈给我们，感谢您使用被系统）</strong></div>
+  <div class="body-content">
+    <form method="post" class="form-x" action="/feed/addFeedBackUser">
+      <div class="form-group">
+        <div class="label" style="width: 80px;">
+          <label for="sitename" ><strong>反馈类型：</strong></label>
+        </div>
+
+        <div class="field">
+          <select class="input w50" name="fbType">
+            <option value="界面问题"><span>界面相关</span></option>
+            <option value="系统问题"><span>系统相关</span></option>
+            <option value="意见建议"><span>意见建议</span></option>
+            <option value="其他"><span>其他</span></option>
+          </select>
+        </div>
+      </div>      
+
+      <div class="form-group">
+        <div class="label" style="width: 80px;">
+          <label for="sitename" ><strong>详细描述：</strong></label>
+        </div>
+        <div class="field">
+          <textarea name="fbText" cols="40" rows="10"></textarea>
+        </div>
+      </div>
+
+ <input th:value="${session.user.userId}" name="userId" type="hidden" >
+      
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <button class="button bg-main icon-check-square-o" type="submit"> 提交</button>   
+        </div>
+      </div>      
+    </form>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+
+  function updateName (){
+
+    if($("#ck").prop('checked')){
+      document.getElementById('adminName').readOnly=false;
+    }else{
+      document.getElementById('adminName').readOnly=true;
+    }
+  }
+</script>
+</body></html>

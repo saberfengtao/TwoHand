@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ft.mapper.GoodMapper">
+
+    <!--添加新的二手物品（管理员）-->
+    <insert id="addGoodFromAdmin" parameterType="Good">
+        insert into good (gtid,good_name,good_count,good_price,good_photo,good_introduction,good_state)
+        VALUES(#{goodTypeId},#{good.goodName},#{good.goodCount},#{good.goodPrice},#{good.goodPhoto},#{good.goodIntroduction},3);
+    </insert>
+
+    <!--添加新的二手物品(用户)-->
+    <insert id="addGoodFromUser" parameterType="Good">
+        insert into good (gtid,good_name,good_count,good_price,good_photo,good_introduction,good_state)
+        VALUES(#{goodTypeId},#{good.goodName},#{good.goodCount},#{good.goodPrice},#{good.goodPhoto},#{good.goodIntroduction},0);
+    </insert>
+
+    <!--修改新的二手物品(用户)-->
+    <update id="updGoodFromUser" parameterType="Good">
+        update good g set
+        <if test="good.goodPhoto!=null">
+            good_photo=#{good.goodPhoto},
+        </if>
+        good_name=#{good.goodName},
+        good_count=#{good.goodCount},
+        good_price=#{good.goodPrice},
+        good_introduction=#{good.goodIntroduction},
+        gtid=#{goodTypeId}
+
+        where good_id=#{good.goodId}
+   </update>
+
+    <!-- 查询二手物品id通过图片名（管理员）-->
+    <select id="findNewGoodByGoodPhotoFromAdmin" resultType="int">
+       select good_id from good g where g.good_photo=#{goodPhoto}
+   </select>
+
+    <!-- 查询二手物品id通过图片名(用户)-->
+    <select id="findNewGoodByGoodPhotoFromUser" resultType="int">
+       select good_id from good g where g.good_photo=#{goodPhoto}
+   </select>
+
+    <!--查询用户的所有物品（未卖出）-->
+    <select id="getSaleGoodByUserId" resultMap="com.ft.mapper.CommonMapper.goodMap">
+       select g.*,gt.*
+       from good g LEFT JOIN sales_order so
+       ON g.good_id =so.gid LEFT JOIN good_type gt
+       ON g.gtid=gt.good_type_id
+       WHERE so.ouid=#{userId} and so.so_state=0 or so.ouid=1 and so.so_state=20
+    </select>
+
+    <select id="getGoodByGoodId" resultMap="com.ft.mapper.CommonMapper.goodMap">
+       select g.*,gt.*
+       from good g LEFT JOIN good_type gt
+       ON g.gtid=gt.good_type_id
+       WHERE g.good_id=#{goodId}
+    </select>
+
+   <!-- <select id="getGoodByGoodId" resultMap="com.ft.mapper.CommonMapper.goodMap">
+       select g.*,gt.*
+       from good g LEFT JOIN good_type gt
+       ON g.gtid=gt.good_type_id
+       WHERE g.good_id=#{goodId}
+    </select>
+    getGoodByGoodIdFromAdmin-->
+
+    <!-- 查询所有没卖出的物品即查卖出的物品-->
+    <select id="getAllGood" resultMap="com.ft.mapper.CommonMapper.goodMap">
+       select g.*,gt.*
+       from good g LEFT JOIN good_type gt
+       ON g.gtid=gt.good_type_id
+       where good_state BETWEEN 0 and 49
+   </select>
+
+    <!-- 查询所有没卖出的物品即查卖出的物品通过物品类型ID-->
+    <select id="getAllGoodsByGoodTypeId" resultMap="com.ft.mapper.CommonMapper.goodMap">
+       select g.*,gt.*
+       from good g LEFT JOIN good_type gt
+       ON g.gtid=gt.good_type_id
+       where good_state BETWEEN 0 and 49
+        <if test="goodTypeId!=0">
+       and g.gtid=#{goodTypeId}
+        </if>
+   </select>
+
+    <!-- 物品名字模糊查询-->
+    <select id="goodListByGoodNameX" resultMap="com.ft.mapper.CommonMapper.goodMap">
+        select g.*,gt.*
+        from good g LEFT JOIN good_type gt
+        ON g.gtid=gt.good_type_id
+        where good_state BETWEEN 0 and 49
+
+            and g.good_name LIKE CONCAT("%", #{goodNameX}, "%")
+
+    </select>
+
+
+
+    <!--修改二手物品状态-->
+    <update id="updGoodStateByGoodIdAndSoState" parameterType="int">
+        update good g set
+        <if test="soState==0">
+            good_state=50
+        </if>
+        <if test="soState==3">
+            good_state=53
+        </if>
+        where good_id=#{goodId}
+    </update>
+
+    <!--通过物品ID删除物品-->
+    <delete id="deleteGoodByGoodId">
+       DELETE FROM good g where g.good_id=#{goodId}
+    </delete>
+
+
+</mapper>

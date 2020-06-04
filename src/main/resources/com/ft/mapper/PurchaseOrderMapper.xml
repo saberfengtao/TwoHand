@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ft.mapper.PurchaseOrderMapper">
+
+    <!-- 生成买入单-->
+    <insert id="addPurchaseBySoleOrder" parameterType="SaleOrder">
+        insert into purchase_order (ouid,iuid,gid,po_price,po_number,po_time_start,po_state)
+        VALUES(
+        #{outUserId},
+        #{userId},
+        #{goodId},
+        #{saleOrder.soPrice},
+        #{saleOrder.soNumber},
+        #{saleOrder.soTimeEnd},
+        #{saleOrder.soState})
+    </insert>
+
+    <!--用户得到自己的买货单-->
+    <select id="getAllPurchaseOrderByUserId" resultMap="com.ft.mapper.CommonMapper.purchaseOrderMap">
+      SELECT
+        po.poid,po.po_price,po.po_number,po.po_time_start,po.po_state,
+        tu1.user_id as user_id1,tu1.user_name as user_name1,tu1.user_mail as user_mail1,tu1.user_tel as user_tel1,tu1.user_photo as user_photo1,
+        tu.user_id,tu.user_name,tu.user_mail,tu.user_tel,tu.user_photo,
+        g.good_id,g.good_name,g.good_price,g.good_count,g.good_photo,g.good_introduction
+        from purchase_order po
+        LEFT JOIN t_user tu ON po.ouid=tu.user_id
+        LEFT JOIN t_user tu1 ON po.iuid=tu1.user_id
+        LEFT JOIN  good g on po.gid=g.good_id
+     WHERE po.iuid=#{userId} and  po.po_state BETWEEN 0 and 3
+    </select>
+
+    <!--修改买货单状态达到删除的目的？订单状态为0则修改状态为98  如果是1修改状态为99-->
+    <!--修改卖货单状态完成交易-->
+    <update id="updPurchaseOrderStateByOrderStateAndId" parameterType="int">
+        update purchase_order po set
+
+        <if test="orderState==0">
+            po.po_state=98
+        </if>
+        <if test="orderState==3">
+            po.po_state=99
+        </if>
+        where po.poid=#{orderId}
+    </update>
+
+    <!--<insert id="addSaleOrderFromUser" parameterType="Good">
+        insert into sales_order (ouid,gid,so_price,so_number,so_time_start,so_state)
+        VALUES(#{userId},#{good.goodId},#{good.goodPrice},#{good.goodCount},#{soTimeStart},0);
+    </insert>
+
+    &lt;!&ndash;购买前得到关于物品的详细信息&ndash;&gt;
+    -->
+</mapper>

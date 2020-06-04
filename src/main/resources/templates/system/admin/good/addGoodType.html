@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>添加物品</title>
+    <link rel="stylesheet" href="/css/pintuer.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="/js/jquery.js"></script>
+    <script src="/js/pintuer.js"></script>
+</head>
+<body>
+<div class="panel admin-panel">
+    <div class="panel-head"><strong class="icon-reorder">添加物品类型</strong></div>
+    <div class="padding border-bottom">
+
+        <form method="post" action="/good/addGoodType">
+        <div class="form-group">
+            <div class="label">
+                <label for="sitename"><strong>类型名称：</strong></label>
+            </div>
+            <div class="field">
+                <input class="input w50" name="goodTypeName" required size="50" autocomplete="off" type="text" placeholder="请输入物品名称">
+            </div><ul class="search">
+            <li>
+                <input  type="submit" id="su"  class="button border-green" value="提交" />
+            </li>
+        </ul>
+        </div>
+        </form>
+        <table class="table table-hover text-center" style="width: 400px;text-align:center;border-color: #c0e2ef;" width="40" border="1">
+            <tr>
+                <th width="120">ID</th>
+                <th>类型名称</th>
+                <!-- <th>类型状态</th>-->
+                <!--<th >修改</th>-->
+                <th >删除</th>
+            </tr>
+            <tr th:each="goodType:${goodTypeList}">
+                <td th:text="${goodTypeStat.index+1}"><!--<input type="checkbox" name="id[]" value="1" />i--></td>
+                <td th:text="${goodType.goodTypeName}"></td>
+                <!--  <td th:if="${goodType.goodTypeState==0}" >正常</td>
+                  <td th:if="${goodType.goodTypeState==1}" >冻结</td>-->
+                <!--<td><div class="button-group"> <a class="button border-green" th:href="@{updRole(id=${goodType.goodTypeId})}"> 编辑</a> </div></td>-->
+                <td><div class="button-group"> <a class="button border-red" href="javascript:void(0)" th:onclick="'javascript:del('+${goodType.goodTypeId}+')'">
+
+                    <span class="icon-trash-o"></span> 删除</a> </div></td>
+            </tr>
+
+        </table>
+        <form id="ff" method="post" action="/good/delGoodType">
+            <input type="hidden" name="goodTypeId" id="goodTypeId">
+        </form>
+    </div>
+
+</div>
+<!--[[${goodTypeList}]]-->
+<script type="text/javascript">
+    /**
+     * 显示选择上传的图片略缩图
+     * 当选择了图片文件时触发这个方法
+     */
+    function previewFile() {
+        // 通过标签选择器获取HTML元素
+        var preview = document.querySelector('img');
+        var file = document.querySelector('input[type=file]').files[0];
+        // Js内置文件流
+        var reader = new FileReader();
+
+        // 更新img标签的src属性为图片的本地路径，就可以显示了
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        }
+
+        // 图片文件不空就显示
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            // 图片文件是空的
+            preview.src = "";
+        }
+    }
+
+    function del(id){
+        if(confirm("您确定要删除吗?")){
+            $("#goodTypeId").val(id);
+            $("#ff").submit();
+        }
+    }
+</script>
+
+</body>
+</html>

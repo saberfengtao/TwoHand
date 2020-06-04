@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="renderer" content="webkit">
+  <title></title>
+  <link rel="stylesheet" href="/css/pintuer.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <script src="/js/jquery.js"></script>
+  <script src="/js/pintuer.js"></script>
+</head>
+
+<body>
+<div class="panel admin-panel">
+  <div class="panel-head"><strong><span class="icon-key"></span>添加用户</strong></div>
+  <div class="body-content">
+    <form method="post" class="form-x" action="">
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename"><strong>管理员帐号：</strong></label>
+        </div>
+        <div class="field">
+          <label style="line-height:33px;">
+            [[${admin.adminLoginName}]]
+          </label>
+        </div>
+      </div>
+      <div class="form-group">
+
+        <div class="form-group">
+          <div class="label">
+            <label for="sitename"><strong>用户姓名：</strong></label>
+          </div>
+          <div class="field">
+            <input type="hidden" name="adminId" th:value="${admin.adminId}">
+            <input type="hidden" name="adminLoginName" th:value="${admin.adminLoginName}">
+            <input th:value="${admin.adminName}" autocomplete="off" type="text" class="input w50" name="adminName" size="50" placeholder="请再次输入用户名（非必填项）"  />
+              <div style="float: left;height: 35px;width: 200px;padding-left: 20px;margin-top: 11px;">
+               |  <span style="font-weight: bold;">用户状态：</span>正常 <input type="radio" id="case1" name="adminState" value="0"> 冻结<input id="case2" type="radio" name="adminState" value="1">
+              </div>
+          </div>
+        </div>
+
+          <div style="margin-left:56px">
+            <label><strong>用户角色：</strong></label>
+          </div>
+          <div class="field" style="padding-top:8px;margin-left:80px">
+            <table>
+              <tr>
+                <td th:each="role:${roles}">
+                  <span th:text="${role.roleName}"></span>
+                  <input name="roles" th:value="${role.roleId}" type="checkbox" th:checked="${role.selected}" />
+                </td>
+              </tr>
+            </table>
+
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="label">
+            <label></label>
+          </div>
+          <div class="field">
+            <button id="su" class="button bg-main icon-check-square-o" type="submit"> 提交</button>
+          </div>
+        </div>
+    </form>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    var case1 = document.getElementById('case1');
+    var case2 = document.getElementById('case2');
+    if([[${admin.adminState}]]==0){
+      case1.click()==true;
+    }else {case2.click()==true;}
+  })
+</script>
+</body></html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ft.mapper.AdminMapper">
+    <!--<select id="adminLogin" parameterType="Admin" resultMap="com.ft.mapper.CommonMapper.adminMap">
+       select *
+       from admin
+       where
+       admin_login_name=#{adminLoginName}
+       and admin_login_pwd=#{adminLoginPwd}
+    </select>-->
+
+    <!-- 通过登陆名查找管理员 -->
+    <select id="getAdminByLoginName" parameterType="Admin" resultMap="com.ft.mapper.CommonMapper.adminMap">
+       select *
+       from admin
+       where
+       admin_login_name=#{adminLoginName}
+    </select>
+
+    <!-- 通过登陆名查找管理员拥有权限 -->
+    <select id="getAuthoritiesByAdminName" resultMap="com.ft.mapper.CommonMapper.authorityMap">
+     select t.*
+     from admin a
+     LEFT JOIN t_admin_role ar on a.admin_login_name=ar.admin_id
+     LEFT JOIN role r on r.role_id=ar.role_id
+     LEFT JOIN t_role_autho tr on r.role_id=tr.role_id
+     LEFT JOIN t_autho t ON t.autho_id=tr.autho_id
+     WHERE admin_login_name=#{adminLoginName}
+    </select>
+
+    <!--注册的管理员判重-->
+    <select id="findAdminByName" resultType="int">
+		select count(*) from admin
+		where admin_login_name=#{adminLoginName}
+	</select>
+
+    <!--注册的角色判重-->
+    <select id="findRoleByName" resultType="int">
+		select count(*) from role
+		where role_name=#{adminRole}
+	</select>
+
+    <!--添加管理员-->
+    <insert id="addAdmin" parameterType="Admin">
+        insert into admin (admin_name,admin_login_name,admin_login_pwd,admin_state)
+        VALUES(#{adminName},#{adminLoginName},#{adminLoginPwd},0);
+    </insert>
+
+    <!--更改管理员个人信息-->
+   <update id="updUserByAdminId" parameterType="Admin">
+        update admin set admin_login_pwd=#{adminLoginPwd},admin_name=#{adminName} where admin_id=#{adminId}
+   </update>
+
+    <!--更改管理员信息（超级管理员）-->
+    <update id="updUserByAdminIdM" parameterType="Admin">
+        update admin set admin_name=#{adminName},admin_state=#{adminState} where admin_id=#{adminId}
+   </update>
+    <!--添加管理员权限-->
+    <insert id="addAdminRole">
+        insert into t_admin_role values
+        <foreach collection="roles" item="role" separator=",">
+            (#{role},#{adminLoginName})
+        </foreach>
+    </insert>
+
+    <!--查询所有用户-->
+    <select id="getAllUsers" resultMap="com.ft.mapper.CommonMapper.adminMap">
+        select * from admin where admin_state!=3
+    </select>
+
+    <!--查询用户通过用户ID-->
+    <select id="getAdminByAdminId" resultMap="com.ft.mapper.CommonMapper.adminMap">
+        select * from admin where admin_id=#{adminId}
+    </select>
+
+    <!--删除当前ID用户的所有角色-->
+    <delete id="delAdminRole">
+        delete from t_admin_role where admin_id = #{adminId}
+    </delete>
+
+
+</mapper>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ft.mapper.FeedBackMapper">
+
+    <!--添加新的二手物品(用户)-->
+    <insert id="addFeedBackUser" parameterType="FeedBack">
+        insert into feedback (uid,type_name,text,fbTime,state)
+        VALUES(#{userId},#{feed.fbType},#{feed.fbText},#{feed.fbTime},0);
+    </insert>
+
+    <!--修改反馈单状态 达到删除的目的-->
+    <update id="delFeedBack" parameterType="int">
+        update feedback f set
+       f.state=1
+        where fbid=#{feedId}
+    </update>
+
+    <!--查看所有反馈单-->
+    <select id="findAllFeedBackByState" resultMap="com.ft.mapper.CommonMapper.feedBackMap">
+        select * from feedback f
+        left join t_user tu
+        on  f.uid=tu.user_id
+        where f.state=0
+    </select>
+
+</mapper>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>正在售卖的物品</title>
+    <link rel="stylesheet" href="/css/pintuer.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <script src="/js/jquery.js"></script>
+    <script src="/js/pintuer.js"></script>
+</head>
+<body>
+
+<div class="panel admin-panel">
+    <div class="panel-head"><strong><span class="icon-key"></span> 交易记录</strong></div>
+    <div class="body-content">
+      <!--  [[${goodList}]]-->
+
+        <table class="table table-hover text-center" border="1px" style="border-color: #c0e2ef;">
+            <tr>
+                <th width="80">序号</th>
+                <th>物品名称</th>
+                <th>物品数量</th>
+                <th  width="80">物品图片</th>
+                <th width="80px">物品描述</th>
+                <th>物品价格</th>
+               <!-- <th>物品状态</th>-->
+                <th>来源</th>
+                <th width="160px">联系方式</th>
+                <th>订单完成时间</th>
+                <th>删除</th>
+            </tr>
+            <tr th:each="purchaseOrder:${purchaseOrderList}">
+                <td th:text="${purchaseOrderStat.index+1}"></td>
+                <td th:text="${purchaseOrder.good.goodName}"></td>
+                <td th:text="${purchaseOrder.poNumber}"></td>
+                <td><img th:src="${purchaseOrder.good.goodPhoto}" height="70" width="100" alt="这是略缩图..."/></td>
+                <td align="null">
+                    <textarea style="background-color: white"  readonly="readonly" name="goodIntroduction" cols="40" rows="4">[[${purchaseOrder.good.goodIntroduction}]]
+                    </textarea>
+                </td>
+                <td th:text="${purchaseOrder.poPrice}"></td>
+                <td ><span th:if="${purchaseOrder.poState==3}">官方售卖</span><span th:if="${purchaseOrder.poState==0}"><a th:title="${purchaseOrder.outUser.userName}">用户售卖</a></span></td>
+                <td ><span th:if="${purchaseOrder.poState==3}">官方电话：暂无<br>官方邮箱：暂无</span>
+                     <span th:if="${purchaseOrder.poState==0}">联系方式：<br><a th:title="${purchaseOrder.outUser.userTel}">手机号</a>&nbsp;&nbsp&nbsp;&nbsp<a th:title="${purchaseOrder.outUser.userMail}">邮箱号</a></span></td>
+                <td th:text="${purchaseOrder.poTimeStart}"></td>
+                <td><div class="button-group"> <a class="button border-red" th:onclick="'javascript:del('+${purchaseOrder.poId}+','+${purchaseOrder.poState}+')'" href="javascript:void(0)" ><span class="icon-trash-o"></span> 删除</a></div> </td>
+              </tr>
+
+           <!--  [[${purchaseOrderList}]]-->
+        </table>
+
+      </div>
+</div>
+<form id="ff" method="post" action="/purchaseOrder/delPurchaseOrder">
+    <input type="hidden" name="orderId" id="orderId">
+    <input type="hidden" name="orderState" id="orderState">
+</form>
+<script type="text/javascript">
+    /**
+     * 显示选择上传的图片略缩图
+     * 当选择了图片文件时触发这个方法
+     */
+    function previewFile() {
+        // 通过标签选择器获取HTML元素
+        var preview = document.querySelector('img');
+        var file = document.querySelector('input[type=file]').files[0];
+        // Js内置文件流
+        var reader = new FileReader();
+
+        // 更新img标签的src属性为图片的本地路径，就可以显示了
+        reader.onloadend = function () {
+            preview.src = reader.result;
+        }
+
+        // 图片文件不空就显示
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            // 图片文件是空的
+            preview.src = "";
+        }
+    }
+    function del(id,state){
+        if(confirm("您确定要删除吗?")){
+            $("#orderId").val(id);
+            $("#orderState").val(state);
+            $("#ff").submit();
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>校园二手交易网物品展示</title>
+  <link rel="stylesheet" type="text/css" href="../res/static/css/main.css">
+  <link rel="stylesheet" type="text/css" href="../res/layui/css/layui.css">
+  <script type="text/javascript" src="../res/layui/layui.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+</head>
+<body>
+
+  <div class="site-nav-bg">
+    <div class="site-nav w1200">
+      <p class="sn-back-home">
+        <i class="layui-icon layui-icon-home"></i>
+        <a href="/basic/toTwoHandIndex">首页</a><input id="msg" type="hidden" th:value="${msg}">
+      </p>
+      <div class="sn-quick-menu">
+        <div class="login"><a th:if="${session.user==null}" href="/basic/toUserLogin">登录</a>
+
+          <a th:if="${session.user!=null}" title="点击去到个人中心" target="_blank"
+             th:onclick="'javascript:goUserHome('+${session.user.userId}+')'" style="color: #0C0C0C;">
+
+            用户：[[${session.user.userLoginName}]]</a>
+          &nbsp;&nbsp&nbsp;&nbsp<a th:if="${session.user!=null}" id="zx" title="点击退出当前用户" href="/logoutUptUser">注销</a>
+        </div>
+        <!--<div class="sp-cart"><a href="shopcart.html">购物车</a><span>2</span></div>-->
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="header">
+    <div class="headerLayout w1200">
+      <div class="headerCon">
+        <h1 class="mallLogo">
+          <a href="#" title="校园二手物品易">
+            <img src="/res/static/img/logo.png">
+          </a>
+        </h1>
+        <div class="mallSearch">
+          <form action="/good/findGoodByGoodNameX" class="layui-form" novalidate method="post">
+            <input type="text" name="goodNameX" required  lay-verify="required" autocomplete="off" class="layui-input" placeholder="请输入需要的商品">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">
+              <i class="layui-icon layui-icon-search"></i>
+            </button>
+            <input type="hidden" name="" value="">
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="content content-nav-base commodity-content">
+    <div class="main-nav">
+      <div class="inner-cont0">
+        <div class="inner-cont1 w1200">
+          <div class="inner-cont2">
+            <a href="/good/getGoodByGoodTypeId?goodTypeId=0" class="active">所有商品</a>
+            <!--<a href="buytoday.html">今日团购</a>
+            <a href="information.html">母婴资讯</a>
+            <a href="about.html">关于我们</a>-->
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="commod-cont-wrap">
+      <div class="commod-cont w1200 layui-clear">
+        <div class="left-nav">
+          <a href="/good/getGoodByGoodTypeId?goodTypeId=0" class="active"> <div class="title">所有分类</div></a>
+          <div class="list-box">
+            <dl th:each="goodType:${goodTypeList}" >
+
+              <dt><a th:href="@{/good/getGoodByGoodTypeId(goodTypeId=${goodType.goodTypeId})}">[[${goodType.goodTypeName}]]</a></dt><!--[[${goodList}]]-->
+
+
+            <!-- <dd><a href="javascript:;">宝宝辅食</a></dd>
+             <dd><a href="javascript:;">营养品</a></dd>-->
+            </dl>
+
+          </div>
+        </div>
+        <div class="right-cont-wrap">
+          <div class="right-cont">
+            <!--<div class="sort layui-clear">
+              <a class="active" href="javascript:;" event = 'volume'>销量</a>
+              <a href="javascript:;" event = 'price'>价格</a>
+              <a href="javascript:;" event = 'newprod'>新品</a>
+              <a href="javascript:;" event = 'collection'>收藏</a>
+            </div>-->
+            <div class="prod-number">
+              <span th:each="goodType:${goodTypeList}" th:if="${goodType.goodTypeId==sbId}">
+                当前类别：[[${goodType.goodTypeName}]]
+              </span>
+              <span  th:if="${sbId==0}">
+                当前类别：所有类别
+              </span>
+            </div>
+            <div class="cont-list layui-clear" id="list-cont">
+              <div class="item"  th:each="goodByGoodTypeId:${goodListByGoodTypeId}">
+                <div class="img">
+                  <a th:onclick="'javascript:goGood('+${goodByGoodTypeId.goodId}+')'" >
+                    <!--@{/saleOrder/toGetSaleOrderMessageByGoodId(goodId=${goodByGoodTypeId.goodId})}-->
+                    <img width="280px" height="280px" th:src="${goodByGoodTypeId.goodPhoto}"></a>
+                </div>
+                <div class="text">
+                  <p class="title">[[${goodByGoodTypeId.goodName}]]</p>
+                  <p class="price">
+                    <span class="pri">￥[[${goodByGoodTypeId.goodPrice}]]</span>
+                    <span class="nub">数量：[[${goodByGoodTypeId.goodCount}]]</span>
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 模版引擎导入 -->
+            <!-- <script type="text/html" id="demo">
+              {{# layui.each(d.menu.milk.content,function(index,item){}}
+                <div class="item">
+                  <div class="img">
+                    <a href="javascript:;"><img src="{{item.img}}"></a>
+                  </div>
+                  <div class="text">
+                    <p class="title"></p>
+                    <p class="price">
+                      <span class="pri">{{item.pri}}</span>
+                      <span class="nub">{{item.nub}}</span>
+                    </p>
+                  </div>
+                </div>
+              {{# }); }}
+            </script>
+            <div id="demo0" style="text-align: center;"></div>-->
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <form id="ff" method="post" th:action="@{/saleOrder/toGetSaleOrderMessageByGoodId}">
+    <input id="goodId" type="hidden" name="goodId">
+  </form>
+  <form id="goUserOwn" method="post" th:action="@{/goUserHome}" target="_blank">
+    <input id="userId" type="hidden" name="userId">
+  </form>
+
+   <!--  <script>
+
+       window.οnlοad= function () {
+
+         loadData()  //请求数据
+         getPage()     //分页操作
+       }
+
+       var page=1; //设置首页页码
+       var limit=2;  //设置一页显示的条数
+       var total;    //总条数
+
+
+       function getPage(){
+         layui.use('laypage', function(){
+           var laypage = layui.laypage;
+
+           //执行一个laypage实例
+           laypage.render({
+             elem: 'laypage' //注意，这里的 test1 是 ID，不用加 # 号
+             ,count: total, //数据总数，从服务端得到
+             limit:limit,   //每页条数设置
+             jump: function(obj, first){
+               //obj包含了当前分页的所有参数，比如：
+               console.log(obj.curr); //得到当前页，以便向服务端请求对应页的数据。
+               console.log(obj.limit); //得到每页显示的条数
+               page=obj.curr;  //改变当前页码
+               limit=obj.limit;
+               //首次不执行
+               if(!first){
+                 loadData()  //加载数据
+               }
+             }
+           });
+         });
+       }
+
+
+       function loadData(){
+         $.ajax({
+           type:"post",
+           url:"/it/orderManage/getOrderList",//对应controller的URL
+           async:false,
+           dataType: 'json',
+           data:{
+             "pageIndex":page,
+             "pageSize":limit,
+           },
+           success:function(ret){
+             total=ret.total;  //设置总条数
+             console.log(ret);
+             var data1=ret.rows;
+             var html='';
+             for(var i=0;i<data1.length;i++){
+               html+='<dl>';
+               html+=' <dt>';
+               html+='     <span class="s1">'+data1[i].CREATE_TIME+'</span>';
+               html+='     <span class="s2">'+data1[i].STAGE_NAME+'</span>';
+               html+=' </dt>';
+               html+=' <dd class="d1">';
+               html+='     价格：<span>￥'+data1[i].REWARD_FEE+'</span>';
+               html+=' </dd>';
+               html+=' <dd class="d1">';
+               html+='     名称：<span>'+data1[i].ORDER_NAME+'</span>';
+               html+=' </dd>';
+               html+=' <dd class="d1">';
+               html+='     人数：<span>'+data1[i].TAKE_NUM+'人参与</span>';
+               html+=' </dd>';
+               html+=' <dd class="d1">';
+               html+='     时间：<span>'+data1[i].START_DATE+'点 &#45;&#45; '+data1[i].END_DATE+'点</span>';
+               html+=' </dd>';
+               html+='</dl>';
+
+             }
+             console.log(html)
+             $(".orderList").empty().append(html);
+
+           }
+         });
+       }
+
+     </script>-->
+
+<script>
+
+  layui.config({
+    base: '../res/static/js/util/' //你存放新模块的目录，注意，不是layui的模块目录
+  }).use(['mm','carousel','jquery','form'],function(){
+      var laypage = layui.laypage,$ = layui.$,
+     mm = layui.mm;
+       laypage.render({
+        elem: 'demo0'
+        ,count: 10//数据总数
+         ,limit:5
+
+      });
+
+
+    // 模版引擎导入
+    //  var html = demo.innerHTML;
+    //  var listCont = document.getElementById('list-cont');
+    //  // console.log(layui.router("#/about.html"))
+    // mm.request({
+    //     url: '../json/commodity.json',
+    //     success : function(res){
+    //       console.log(res)
+    //       listCont.innerHTML = mm.renderHtml(html,res)
+    //     },
+    //     error: function(res){
+    //       console.log(res);
+    //     }
+    //   })
+
+    $('.sort a').on('click',function(){
+      $(this).addClass('active').siblings().removeClass('active');
+    })
+    $('.list-box dt').on('click',function(){
+      if($(this).attr('off')){
+        $(this).removeClass('active').siblings('dd').show()
+        $(this).attr('off','')
+      }else{
+        $(this).addClass('active').siblings('dd').hide()
+        $(this).attr('off',true)
+      }
+    })
+
+});
+
+
+
+
+  function goGood(id){
+
+    if([[${session.user==null}]]){
+      layer.msg("用户尚未登录，请先登录");
+    }else {
+      var goodId=document.getElementById("goodId");
+      var ff=document.getElementById("ff");
+      goodId.value=id;
+      //$("#roleId").value=id;
+      ff.submit();
+    }
+  }
+
+  function goUserHome(id){
+    var userId=document.getElementById("userId");
+    var goUserOwn=document.getElementById("goUserOwn");
+    userId.value=id;
+    goUserOwn.submit();
+  }
+</script>
+
+
+</body>
+</html>

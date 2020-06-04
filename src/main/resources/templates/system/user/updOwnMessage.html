@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-cn" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="renderer" content="webkit">
+<title></title>
+<link rel="stylesheet" href="/css/pintuer.css">
+<link rel="stylesheet" href="/css/admin.css">
+<script src="/js/jquery.js"></script>
+<script src="/js/pintuer.js"></script>
+</head>
+<body>
+<div class="panel admin-panel">
+  <div class="panel-head"><strong><span class="icon-key"></span> 个人信息完善</strong></div>
+  <div class="body-content">
+    <form method="post" class="form-x" action="/system/updUserMessageByUserId" enctype="multipart/form-data">
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename"><strong>用户账号：</strong></label>
+        </div>
+        <div class="field">
+          <label style="line-height:33px;">
+           [[${user.userLoginName}]]
+            <input type="hidden" class="input w50"  th:value="${user.userId}" name="userId"  />
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename"><strong>用户姓名：</strong></label>
+        </div>
+        <div class="field">
+          <input type="text" th:value="${user.userName}" class="input w50" id="userName" name="userName" size="50" placeholder="请再次输入用户名" autocomplete="off" />
+          <input style="height:40px;float:left;margin-left: 25px;" type="radio" name="userSex" value="0" checked > <p style="float: left;margin-top: 7px;width: 100px;">男</p>
+
+          <input style="height:40px;float:left;margin-left: -25px;" type="radio" name="userSex" value="1"><p style="float: left;margin-top: 7px;width: 100px;">女</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename"><strong>用户电话：</strong></label>
+        </div>
+
+        <div class="field">
+          <input type="text" th:value="${user.userTel}" class="input w50" placeholder="请输入用户电话" id="mpass" name="userTel" size="50" />
+        </div>
+      </div>      
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename"><strong>用户头像：</strong></label>
+        </div>
+        <div class="field">
+         <!-- <input type="password" class="input w50" name="adminLoginPwd" size="50"  />-->
+          <img id="userHid" src="/images/11.jpg" height="150" width="150" alt="这是略缩图..."/>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="label">
+          <label for="sitename"><strong>添加图像：</strong></label>
+        </div>
+        <div class="field">
+          <!--<input type="password" class="input w50" name="renewpass" size="50"/>-->
+          <input class="input w50" size="50" type="file" onchange="previewFile()" accept="image/gif, image/jpeg, image/png, image/jpg" name="userFilePath" />
+        </div>
+      </div>
+
+      
+      <div class="form-group">
+        <div class="label">
+          <label></label>
+        </div>
+        <div class="field">
+          <button class="button bg-main icon-check-square-o" type="submit"> 提交</button>   
+        </div>
+      </div>      
+    </form>
+  </div>
+</div>
+<script type="text/javascript">
+  /**
+   * 显示选择上传的图片略缩图
+   * 当选择了图片文件时触发这个方法
+   */
+  function previewFile() {
+    // 通过标签选择器获取HTML元素
+    var preview = document.querySelector('img');
+    var file = document.querySelector('input[type=file]').files[0];
+    // Js内置文件流
+    var reader = new FileReader();
+
+    // 更新img标签的src属性为图片的本地路径，就可以显示了
+    reader.onloadend = function () {
+      preview.src = reader.result;
+    }
+
+    // 图片文件不空就显示
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      // 图片文件是空的
+      preview.src = "";
+    }
+  }
+
+
+  if([[${user.userPhoto==null}]]){
+    var userHid=document.getElementById('userHid');
+    userHid.src="/images/11.jpg";
+  }else {
+    var userHid=document.getElementById('userHid');
+    userHid.src="[[${user.userPhoto}]]";
+  }
+
+</script>
+</body></html>

@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--此处专门存放通用的resultMap，但是命名空间必须要有一个对应的接口-->
+<mapper  namespace="com.ft.mapper.CommonMapper">
+
+    <!--管理员表-->
+    <resultMap id="adminMap" type="Admin">
+        <id column="admin_id" property="adminId"></id>
+        <result column="admin_login_name" property="adminLoginName"></result>
+        <result column="admin_login_pwd" property="adminLoginPwd"></result>
+        <result column="admin_name" property="adminName"></result>
+        <result column="admin_state" property="adminState"></result>
+    </resultMap>
+
+    <!--用户表-->
+    <resultMap id="userMap" type="User">
+        <id column="user_id" property="userId"></id>
+        <result column="user_name" property="userName"></result>
+        <result column="user_sex" property="userSex"></result>
+        <result column="user_login_name" property="userLoginName"></result>
+        <result column="user_login_pwd" property="userLoginPwd"></result>
+        <result column="user_tel" property="userTel"></result>
+        <result column="user_mail" property="userMail"></result>
+        <result column="user_photo" property="userPhoto"></result>
+        <result column="user_state" property="userState"></result>
+    </resultMap>
+
+   <!--权限表-->
+    <resultMap id="authorityMap" type="Authority">
+        <id column="autho_id" property="authoId"></id>
+        <result column="autho_name" property="authoName"></result>
+        <result column="autho_perms" property="authoPerms"></result>
+        <result column="autho_level" property="authoLevel"></result>
+        <result column="autho_father_id" property="authoFatherId"></result>
+    </resultMap>
+
+    <!--角色表-->
+    <resultMap id="roleMap" type="Role">
+        <id column="role_id" property="roleId"></id>
+        <result column="role_name" property="roleName"></result>
+        <result column="role_state" property="roleState"></result>
+    </resultMap>
+
+    <!--物品类型表-->
+        <resultMap id="goodTypeMap" type="GoodType">
+            <id column="good_type_id" property="goodTypeId"></id>
+            <result column="good_type_name" property="goodTypeName"></result>
+            <result column="good_type_state" property="goodTypeState"></result>
+        </resultMap>
+
+    <!--物品表-->
+    <resultMap id="goodMap" type="Good">
+        <id column="good_id" property="goodId"></id>
+        <result column="good_name" property="goodName"></result>
+        <result column="good_count" property="goodCount"></result>
+        <result column="good_price" property="goodPrice"></result>
+        <result column="good_photo" property="goodPhoto"></result>
+        <result column="good_introduction" property="goodIntroduction"></result>
+        <result column="good_state" property="goodState"></result>
+
+        <association column="good_type_id" property="goodType" javaType="GoodType">
+            <id column="good_type_id" property="goodTypeId"></id>
+            <result column="good_type_name" property="goodTypeName"></result>
+            <result column="good_type_state" property="goodTypeState"></result>
+        </association>
+    </resultMap>
+
+    <!--反馈表-->
+    <resultMap id="feedBackMap" type="FeedBack">
+        <id column="fbid" property="fbId"></id>
+        <result column="type_name" property="fbType"></result>
+        <result column="text" property="fbText"></result>
+        <result column="fbTime" property="fbTime"></result>
+        <result column="state" property="fbState"></result>
+
+        <!-- 售出者外键 -->
+        <association property="user" javaType="User">
+            <id column="user_id" property="userId"></id>
+            <result column="user_name" property="userName"></result>
+            <result column="user_sex" property="userSex"></result>
+            <result column="user_login_name" property="userLoginName"></result>
+            <result column="user_login_pwd" property="userLoginPwd"></result>
+            <result column="user_tel" property="userTel"></result>
+            <result column="user_mail" property="userMail"></result>
+            <result column="user_photo" property="userPhoto"></result>
+            <result column="user_state" property="userState"></result>
+        </association>
+    </resultMap>
+
+    <!--卖出单表-->
+    <resultMap id="saleOrderMap" type="SaleOrder">
+        <id column="soid" property="soId"></id>
+        <result column="so_price" property="soPrice"></result>
+        <result column="so_number" property="soNumber"></result>
+        <result column="so_time_start" property="soTimeStart"></result>
+        <result column="so_time_end" property="soTimeEnd"></result>
+        <result column="so_state" property="soState"></result>
+        <!-- 货物外键 -->
+        <association property="good" javaType="Good">
+            <id column="good_id" property="goodId"></id>
+            <result column="good_name" property="goodName"></result>
+            <result column="good_count" property="goodCount"></result>
+            <result column="good_price" property="goodPrice"></result>
+            <result column="good_photo" property="goodPhoto"></result>
+            <result column="good_introduction" property="goodIntroduction"></result>
+            <result column="good_state" property="goodState"></result>
+        </association>
+        <!-- 货物类型外键 -->
+        <association property="goodType" javaType="GoodType">
+            <id column="good_type_id" property="goodTypeId"></id>
+            <result column="good_type_name" property="goodTypeName"></result>
+            <result column="good_type_state" property="goodTypeState"></result>
+        </association>
+
+        <!-- 售出者外键 -->
+        <association property="outUser" javaType="User">
+            <id column="user_id" property="userId"></id>
+            <result column="user_name" property="userName"></result>
+            <result column="user_sex" property="userSex"></result>
+            <result column="user_login_name" property="userLoginName"></result>
+            <result column="user_login_pwd" property="userLoginPwd"></result>
+            <result column="user_tel" property="userTel"></result>
+            <result column="user_mail" property="userMail"></result>
+            <result column="user_photo" property="userPhoto"></result>
+            <result column="user_state" property="userState"></result>
+        </association>
+        <!-- 买入者外键 -->
+        <association property="inUser" javaType="User">
+            <id column="user_id1" property="userId"></id>
+            <result column="user_name1" property="userName"></result>
+            <result column="user_sex1" property="userSex"></result>
+            <result column="user_login_name1" property="userLoginName"></result>
+            <result column="user_login_pwd1" property="userLoginPwd"></result>
+            <result column="user_tel1" property="userTel"></result>
+            <result column="user_mail1" property="userMail"></result>
+            <result column="user_photo1" property="userPhoto"></result>
+            <result column="user_state1" property="userState"></result>
+        </association>
+    </resultMap>
+
+    <!--买入单-->
+    <!--卖出单表-->
+    <resultMap id="purchaseOrderMap" type="PurchaseOrder">
+        <id column="poid" property="poId"></id>
+        <result column="po_price" property="poPrice"></result>
+        <result column="po_number" property="poNumber"></result>
+        <result column="po_time_start" property="poTimeStart"></result>
+        <result column="po_time_end" property="poTimeEnd"></result>
+        <result column="po_state" property="poState"></result>
+        <!-- 货物外键 -->
+        <association property="good" javaType="Good">
+            <id column="good_id" property="goodId"></id>
+            <result column="good_name" property="goodName"></result>
+            <result column="good_count" property="goodCount"></result>
+            <result column="good_price" property="goodPrice"></result>
+            <result column="good_photo" property="goodPhoto"></result>
+            <result column="good_introduction" property="goodIntroduction"></result>
+            <result column="good_state" property="goodState"></result>
+        </association>
+        <!-- 货物类型外键 -->
+       <!-- <association property="goodType" javaType="GoodType">
+            <id column="good_type_id" property="goodTypeId"></id>
+            <result column="good_type_name" property="goodTypeName"></result>
+            <result column="good_type_state" property="goodTypeState"></result>
+        </association>-->
+
+        <!-- 售出者外键 -->
+        <association property="outUser" javaType="User">
+            <id column="user_id" property="userId"></id>
+            <result column="user_name" property="userName"></result>
+            <result column="user_sex" property="userSex"></result>
+            <result column="user_login_name" property="userLoginName"></result>
+            <result column="user_login_pwd" property="userLoginPwd"></result>
+            <result column="user_tel" property="userTel"></result>
+            <result column="user_mail" property="userMail"></result>
+            <result column="user_photo" property="userPhoto"></result>
+            <result column="user_state" property="userState"></result>
+        </association>
+        <!-- 买入者外键 -->
+        <association property="inUser" javaType="User">
+            <id column="user_id1" property="userId"></id>
+            <result column="user_name1" property="userName"></result>
+            <result column="user_sex1" property="userSex"></result>
+            <result column="user_login_name1" property="userLoginName"></result>
+            <result column="user_login_pwd1" property="userLoginPwd"></result>
+            <result column="user_tel1" property="userTel"></result>
+            <result column="user_mail1" property="userMail"></result>
+            <result column="user_photo1" property="userPhoto"></result>
+            <result column="user_state1" property="userState"></result>
+        </association>
+    </resultMap>
+
+</mapper>

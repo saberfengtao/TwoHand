@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ft.mapper.SaleOrderMapper">
+    <insert id="addSaleOrderFromAdmin" parameterType="Good">
+        insert into sales_order (ouid,gid,so_price,so_number,so_time_start,so_state)
+        VALUES(#{adminId},#{good.goodId},#{good.goodPrice},#{good.goodCount},#{soTimeStart},3);
+    </insert>
+
+    <insert id="addSaleOrderFromUser" parameterType="Good">
+        insert into sales_order (ouid,gid,so_price,so_number,so_time_start,so_state)
+        VALUES(#{userId},#{good.goodId},#{good.goodPrice},#{good.goodCount},#{soTimeStart},0);
+    </insert>
+
+    <!--购买前得到关于物品的详细信息-->
+    <select id="getSaleOrderByGoodId" resultMap="com.ft.mapper.CommonMapper.saleOrderMap">
+        SELECT
+        so.soid,so.so_price,so.so_number,so.so_time_start,so.so_state,
+        tu.user_id,tu.user_name,tu.user_mail,tu.user_tel,tu.user_photo,
+        g.good_id,g.good_name,g.good_price,g.good_count,g.good_photo,g.good_introduction
+        from sales_order so LEFT JOIN t_user tu
+        ON so.ouid=tu.user_id  LEFT JOIN  good g on so.gid=g.good_id
+        where so.gid=#{goodId} and  so.so_state BETWEEN 0 and 49
+    </select>
+
+    <!--修改卖货单状态完成交易-->
+    <update id="updSaleOrderStateForFinish" parameterType="SaleOrder">
+        update sales_order so set
+        so.iuid=#{userId},
+        so.so_time_end=#{saleOrder.soTimeEnd}
+        <if test="saleOrder.soState==0">
+           ,so.so_state=50
+        </if>
+        <if test="saleOrder.soState==3">
+           ,so.so_state=53
+        </if>
+        where so.soid=#{saleOrder.soId}
+    </update>
+
+    <!--得到完成的卖货单通过用户id-->
+    <select id="getAllSaleOrderByUserId" resultMap="com.ft.mapper.CommonMapper.saleOrderMap">
+        SELECT
+        so.soid,so.so_price,so.so_number,so.so_time_start,so.so_time_end,so.so_state,
+        tu1.user_id as user_id1,tu1.user_name as user_name1,tu1.user_mail as user_mail1,tu1.user_tel as user_tel1,tu1.user_photo as user_photo1,
+        tu1.user_id,tu1.user_name,tu1.user_mail,tu1.user_tel,tu1.user_photo,
+        g.good_id,g.good_name,g.good_price,g.good_count,g.good_photo,g.good_introduction
+        from sales_order so
+        LEFT JOIN t_user tu ON so.ouid=tu.user_id
+        LEFT JOIN  good g on so.gid=g.good_id
+        LEFT JOIN t_user tu1 ON so.iuid=tu1.user_id
+        where so.ouid=#{userId} and  so.so_state = 50
+    </select>
+
+
+    <!--修改买货单状态达到删除的目的？订单状态为50则修改状态为98 -->
+    <!--修改卖货单状态完成交易-->
+    <update id="updSaleOrderStateByOrderId" parameterType="int">
+        update sales_order so set so.so_state=98 where so.soid=#{orderId}
+    </update>
+
+    <!--通过物品ID删除买货单-->
+    <delete id="deleteSaleOrderByGoodId">
+       DELETE FROM sales_order so where so.gid=#{goodId}
+    </delete>
+</mapper>

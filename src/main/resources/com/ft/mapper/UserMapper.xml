@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ft.mapper.UserMapper">
+
+    <!--用户登录-->
+    <select id="userLogin" parameterType="User" resultMap="com.ft.mapper.CommonMapper.userMap">
+          SELECT *
+          FROM  t_user
+          WHERE user_login_name=#{userLoginName} and user_login_pwd=#{userLoginPwd}
+          or user_mail=#{userLoginName} and user_login_pwd=#{userLoginPwd}
+    </select>
+
+    <select id="getAllUser" resultMap="com.ft.mapper.CommonMapper.userMap">
+          SELECT * FROM  t_user
+    </select>
+
+    <!--查看邮箱在数据库中是否存在对应的用户-->
+    <select id="getMailFindUser" resultType="int">
+		select count(*) from t_user
+		where user_mail=#{userMail}
+	</select>
+
+    <!--根据用户名查询用户-->
+    <select id="getUserByUserLoginName" parameterType="int" resultMap="com.ft.mapper.CommonMapper.userMap">
+          SELECT * FROM  t_user
+          WHERE user_id=#{userId}
+    </select>
+
+    <!--用户名判重-->
+    <select id="haveUserLoginName" resultType="int">
+		select count(*) from t_user
+		where user_login_name=#{haveUserLoginName}
+	</select>
+
+    <!--用户注册-->
+    <insert id="userRegister" parameterType="User" >
+        insert into t_user (user_login_name,user_login_pwd,user_mail,user_state)
+        VALUES(#{userLoginName},#{userLoginPwd},#{userMail},0);
+    </insert>
+
+    <!--更改用户密码-->
+    <update id="updUserPassByUserId" parameterType="User">
+        update t_user u set user_login_pwd=#{userLoginPwd}
+        where u.user_id=#{userId}
+   </update>
+
+    <!--更改用户状态-->
+    <update id="updUserState" parameterType="int">
+        update t_user u set
+        <if test="userState==0">
+        user_state=1
+        </if>
+        <if test="userState==1">
+            user_state=0
+        </if>
+        where u.user_id=#{userId}
+   </update>
+
+    <!--更改用户基本信息-->
+    <!--u.user_mail=#{userMail},>>目前不知支持改邮箱-->
+    <update id="updUserMessageByUserId" parameterType="User">
+         update t_user u set 
+         <if test="userPhoto!=null">
+         u.user_photo=#{userPhoto},
+         </if>
+        u.user_name=#{userName},u.user_sex=#{userSex},u.user_tel=#{userTel}
+         where u.user_id=#{userId}
+   </update>
+</mapper>
