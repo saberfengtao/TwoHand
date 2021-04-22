@@ -16,7 +16,7 @@
     <properties>
         <java.version>1.8</java.version>
         <mysql.version>8.0.16</mysql.version>
-        <shiro.version>1.4.0</shiro.version>
+        <shiro.version>1.7.0</shiro.version>
         <druid.version>1.0.9</druid.version>
        <!-- <jackson.version>2.4.2</jackson.version>-->
         <fastjackson.version>1.2.58</fastjackson.version>
