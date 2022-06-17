@@ -19,7 +19,7 @@
         <shiro.version>1.4.0</shiro.version>
         <druid.version>1.0.9</druid.version>
        <!-- <jackson.version>2.4.2</jackson.version>-->
-        <fastjackson.version>1.2.58</fastjackson.version>
+        <fastjackson.version>1.2.83</fastjackson.version>
 
     </properties>
 
